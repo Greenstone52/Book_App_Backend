@@ -9,7 +9,7 @@ public class AuthorResponse {
     private String name;
     private String surname;
     private Gender gender;
-    private int birthDate;
+    private String birthDate;
     private String nationality;
 
     public AuthorResponse(Author author){
