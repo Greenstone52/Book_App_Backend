@@ -24,8 +24,7 @@ public class Author {
     private String name;
     private String surname;
 
-    @Max(value = 2015)
-    private int birthDate;
+    private String birthDate;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

@@ -13,10 +13,9 @@ public class BookAvailableResponse {
         name = book.getName();
 
         if(book.getAuthor() == null){
-            authorNameAndSurname = "Ali Desidero";
+            authorNameAndSurname = null;
         }
 
-        // authorNameAndSurname = book.getAuthor().getName() + " " + book.getAuthor().getSurname();
         pageNumber = book.getPageNumber();
     }
 }

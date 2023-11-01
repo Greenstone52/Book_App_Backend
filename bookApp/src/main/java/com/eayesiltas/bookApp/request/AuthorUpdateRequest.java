@@ -7,7 +7,7 @@ import lombok.Data;
 public class AuthorUpdateRequest {
     private String name;
     private String surname;
-    private int birthDate;
+    private String birthDate;
     private Gender gender;
     private String nationality;
 }

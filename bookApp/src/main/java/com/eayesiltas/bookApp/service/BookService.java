@@ -63,25 +63,11 @@ public class BookService {
 
     }
 
-    //public List<BookAvailableResponse> getAllTheAvailableBooks(){
-    //    List<Book> availableBooks = bookRepository.findBooksByUserIdIsNull();
-    //    return availableBooks.stream().map(book->new BookAvailableResponse(book)).collect(Collectors.toList());
-    //}
-
-    //public void updateOneBooksUser(BookUpdateRequest bookUpdateRequest,Long bookId){
-    //    Book book = bookRepository.findById(bookId).orElse(null);
-    //    User user = userRepository.findById(bookUpdateRequest.getUserId()).orElse(null);
-
-    //    book.setUser(user);
-    //    bookRepository.save(book);
-    //}
-
     public Book postOneBook(BookCreateRequest bookRequest){
 
          Book book = new Book();
 
          Author author;
-//         User user;
 
          if(bookRequest.getAuthorId() == null){
             author = null;
@@ -89,17 +75,10 @@ public class BookService {
              author = authorRepository.findById(bookRequest.getAuthorId()).get();
          }
 
-//        if(bookRequest.getUserId() == null){
-//            user = null;
-//        }else{
-//            user = userRepository.findById(bookRequest.getUserId()).get();
-//        }
-
          book.setAuthor(author);
          book.setPageNumber(bookRequest.getPageNumber());
          book.setName(bookRequest.getName());
          book.setText(bookRequest.getText());
-         // book.setUser(user);
          bookRepository.save(book);
          return book;
     }

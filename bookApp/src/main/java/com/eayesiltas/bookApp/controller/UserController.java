@@ -1,76 +1,74 @@
 package com.eayesiltas.bookApp.controller;
 
 import com.eayesiltas.bookApp.request.BookSetToUserRequest;
-import com.eayesiltas.bookApp.request.UserCreateRequest;
 import com.eayesiltas.bookApp.request.UserDetailsUpdateRequest;
 import com.eayesiltas.bookApp.request.UserSetTheCurrentBookRequest;
+import com.eayesiltas.bookApp.response.AuthorResponse;
 import com.eayesiltas.bookApp.response.BookOfUsersResponse;
+import com.eayesiltas.bookApp.response.BookResponse;
 import com.eayesiltas.bookApp.response.UserResponse;
+import com.eayesiltas.bookApp.service.AuthorService;
+import com.eayesiltas.bookApp.service.BookService;
 import com.eayesiltas.bookApp.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
-@AllArgsConstructor
+@RequestMapping("/api/v1/user")
+@RequiredArgsConstructor
+//@Hidden
 public class UserController {
 
-    private UserService userService;
-    @GetMapping
-    public List<UserResponse> getAllTheUsers(){
-        return userService.getAllTheUsers();
+    private final AuthorService authorService;
+    private final BookService bookService;
+    private final UserService userService;
+
+    @GetMapping("/authors")
+    public List<AuthorResponse> getAllTheAuthors(){
+        return authorService.getAllTheAuthors();
     }
 
-    @GetMapping("/{id}/getAllBooksOfUser")
-    public List<BookOfUsersResponse> getAllBooksOfUsers(@PathVariable Long id){
-        return userService.getAllBooksOfUsers(id);
+    @GetMapping("/authors/{id}")
+    public String getAllTheBooksOfTheAuthor(@PathVariable Long id){
+        return authorService.getAllTheBooksOfTheAuthor(id);
     }
 
-//    @GetMapping("/{userId}/books/{bookId}/chapter/{chapterId}")
-//    public String getChapterOfTheBookTheUserHas(@PathVariable Long userId, @PathVariable Long bookId, @PathVariable int chapterId){
-//        return userService.getChapterOfTheBookTheUserHas(userId,bookId,chapterId);
-//    }
-
-    @GetMapping("/{userId}/getCurrentBookChapters/{chapterId}")
-    public String getChapterOfTheCurrentBookTheUserHas(@PathVariable Long userId,@PathVariable int chapterId){
-        return userService.getTheChapterOfTheCurrentBook(userId,chapterId);
+    @GetMapping("/books")
+    public List<BookResponse> getAllTheBooks(){
+        return bookService.getAllTheBooks();
     }
 
-
-    @PostMapping
-    public UserResponse postOneUser(@RequestBody UserCreateRequest userCreateRequest){
-        return userService.saveOneUser(userCreateRequest);
-    }
-
-    @PostMapping("/setABook/{userId}")
-    public void setABookToAUser(@PathVariable Long userId,@RequestBody BookSetToUserRequest bookRequest){
-        userService.setABookToAUser(userId,bookRequest);
-    }
-
-    @PostMapping("/{userId}/setCurrentBook")
-    public String setTheCurrentBookToTheUser(@PathVariable Long userId, @RequestBody UserSetTheCurrentBookRequest request){
-        return userService.setTheCurrentBookToTheUser(userId,request);
-    }
-
-    // @GetMapping("/getAllTheBooks/{id}")
-    // public String getAllTheBooks(@PathVariable Long id){
-    //     return userService.getAllTheBooksOfTheAssociatedUser(id);
-    // }
-
-    @PostMapping("/deleteABookFromTheUser/{id}")
-    public void deleteOneBookFromTheUser(@PathVariable Long id,@RequestBody BookSetToUserRequest bookRequest){
-        userService.deleteOneBookFromTheUser(id,bookRequest);
-    }
-
-    @PutMapping("/{id}")
+    @PutMapping("/users/{id}")
     public UserResponse updateOneUserDetails(@PathVariable Long id, @RequestBody UserDetailsUpdateRequest request){
         return userService.updateOneUserDetails(id,request);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteOneUser(@PathVariable Long id){
-        userService.deleteOneUserById(id);
+    @PostMapping("/users/removeABookFromTheUser/{id}")
+    public void removeOneBookFromTheUser(@PathVariable Long id,@RequestBody BookSetToUserRequest bookRequest){
+        userService.deleteOneBookFromTheUser(id,bookRequest);
     }
+
+    @PostMapping("/users/{userId}/setCurrentBook")
+    public String setTheCurrentBookToTheUser(@PathVariable Long userId, @RequestBody UserSetTheCurrentBookRequest request){
+        return userService.setTheCurrentBookToTheUser(userId,request);
+    }
+
+    @PostMapping("/users/setABook/{userId}")
+    public String setABookToAUser(@PathVariable Long userId,@RequestBody BookSetToUserRequest bookRequest){
+        return userService.setABookToAUser(userId,bookRequest);
+    }
+
+    @GetMapping("/users/{userId}/getCurrentBookChapters/{chapterId}")
+    public String getChapterOfTheCurrentBookTheUserHas(@PathVariable Long userId,@PathVariable int chapterId){
+        return userService.getTheChapterOfTheCurrentBook(userId,chapterId);
+    }
+
+    @GetMapping("/users/{id}/getAllBooksOfUser")
+    public List<BookOfUsersResponse> getAllBooksOfUsers(@PathVariable Long id){
+        return userService.getAllBooksOfUsers(id);
+    }
+
 }

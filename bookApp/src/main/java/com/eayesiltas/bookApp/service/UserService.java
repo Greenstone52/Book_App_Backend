@@ -1,17 +1,16 @@
 package com.eayesiltas.bookApp.service;
 
 import com.eayesiltas.bookApp.entity.Book;
+import com.eayesiltas.bookApp.entity.DetailsOfUser;
 import com.eayesiltas.bookApp.entity.User;
-import com.eayesiltas.bookApp.entity.UserDetails;
 import com.eayesiltas.bookApp.repository.BookRepository;
-import com.eayesiltas.bookApp.repository.UserDetailsRepository;
+import com.eayesiltas.bookApp.repository.DetailsOfUserRepository;
 import com.eayesiltas.bookApp.repository.UserRepository;
 import com.eayesiltas.bookApp.request.BookSetToUserRequest;
 import com.eayesiltas.bookApp.request.UserCreateRequest;
 import com.eayesiltas.bookApp.request.UserDetailsUpdateRequest;
 import com.eayesiltas.bookApp.request.UserSetTheCurrentBookRequest;
 import com.eayesiltas.bookApp.response.BookOfUsersResponse;
-import com.eayesiltas.bookApp.response.BookResponse;
 import com.eayesiltas.bookApp.response.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private UserRepository userRepository;
-    private UserDetailsRepository userDetailsRepository;
+    private DetailsOfUserRepository userDetailsRepository;
     private BookRepository bookRepository;
     private BookService bookService;
 
@@ -36,37 +35,54 @@ public class UserService {
     public UserResponse saveOneUser(UserCreateRequest newUserRequest){
 
         User newUser = new User();
-        // newUser.setId(newUserRequest.get);
         newUser.setEmail(newUserRequest.getEmail());
         newUser.setPassword(newUserRequest.getPassword());
 
-        UserDetails newUserDetails = new UserDetails();
-        // newUserDetails.setId(newUserRequest.getUserDetailsId());
-        newUserDetails.setGsm(newUserRequest.getGsm());
-        newUserDetails.setGender(newUserRequest.getGender());
-        newUserDetails.setName(newUserRequest.getName());
-        newUserDetails.setSurname(newUserRequest.getSurname());
-        newUserDetails.setAddress(newUserRequest.getAddress());
-        newUserDetails.setBirthDate(newUserRequest.getBirthDate());
-        userDetailsRepository.save(newUserDetails);
+        DetailsOfUser newDetailsOfUser = new DetailsOfUser();
+        newDetailsOfUser.setGsm(newUserRequest.getGsm());
+        newDetailsOfUser.setGender(newUserRequest.getGender());
+        newDetailsOfUser.setName(newUserRequest.getName());
+        newDetailsOfUser.setSurname(newUserRequest.getSurname());
+        newDetailsOfUser.setAddress(newUserRequest.getAddress());
+        newDetailsOfUser.setBirthDate(newUserRequest.getBirthDate());
+        userDetailsRepository.save(newDetailsOfUser);
 
-        newUser.setUserDetails(newUserDetails);
+        newUser.setDetailsOfUser(newDetailsOfUser);
         userRepository.save(newUser);
 
         UserResponse userResponse = new UserResponse(newUser);
         return userResponse;
     }
 
-    public void setABookToAUser(Long id,BookSetToUserRequest bookRequest){
+    public String setABookToAUser(Long id,BookSetToUserRequest bookRequest){
         User user = userRepository.findById(id).orElse(null);
         Book book = bookRepository.findById(bookRequest.getId()).orElse(null);
 
-        if(bookRequest.getId() != null){
-            user.getBooks().add(book);
-            book.getUsers().add(user);
+        boolean isAlreadyHas = false;
 
-            userRepository.save(user);
-            bookRepository.save(book);
+        if(user == null){
+            return "There is not like a user has this id!";
+        }else{
+            for (int i = 0; i < user.getBooks().size(); i++) {
+                if(user.getBooks().get(i).getId() == bookRequest.getId()){
+                    isAlreadyHas = true;
+                }
+            }
+
+            if(bookRequest.getId() != null && !isAlreadyHas){
+                user.getBooks().add(book);
+                book.getUsers().add(user);
+
+                userRepository.save(user);
+                bookRepository.save(book);
+
+                return "The book was activated for the user!";
+
+            }else if(isAlreadyHas){
+                return "The user already has this book!";
+            }else{
+                return "There is no such a book!";
+            }
         }
 
     }
@@ -88,7 +104,7 @@ public class UserService {
             }
 
             if(isHasTheUser){
-                UserDetails userDetails = user.getUserDetails();
+                DetailsOfUser userDetails = user.getDetailsOfUser();
                 userDetails.setCurrentBookId(setBookRequest.getCurrentBookId());
                 userDetailsRepository.save(userDetails);
                 return "The operation was completed successfully!";
@@ -99,29 +115,6 @@ public class UserService {
 
     }
 
-    //public String getAllTheBooksOfTheAssociatedUser(Long id){
-    //    User user = userRepository.findById(id).orElse(null);
-    //
-    //    String[][] books = new String[user.getBooks().size()][2];
-    //    String result = "";
-    //
-    //    for(int i = 0; i<books.length; i++){
-    //        books[i][0] = user.getBooks().get(i).getName();
-    //        result += "Name: " + books[i][0] + "\n";
-    //
-    //        if(user.getBooks().get(i).getAuthor() != null){
-    //            books[i][1] = "Author" + user.getBooks().get(i).getAuthor().getName();
-    //            result += books[i][1];
-    //        }
-    //
-    //        books[i][1] = "Author is null!\n";
-    //        result += books[i][1];
-    //    }
-    //
-    //    return result;
-    //
-    //}
-
     public List<BookOfUsersResponse> getAllBooksOfUsers(Long id){
 
         User user = userRepository.findById(id).orElse(null);
@@ -130,40 +123,9 @@ public class UserService {
         return books.stream().map(book -> new BookOfUsersResponse(book)).collect(Collectors.toList());
     }
 
-//    public String getChapterOfTheBookTheUserHas(Long userId,Long bookId,int chapterId){
-//        User user = userRepository.findById(userId).orElse(null);
-//        Book book = bookRepository.findById(bookId).orElse(null);
-//
-//        int counter = 0;
-//
-//        if(user == null){
-//            return "The user is not enrolled in our system.";
-//        }
-//
-//        boolean isHasTheBook = false;
-//
-//        if(book == null){
-//            return "There is not a book like this.";
-//        }else{
-//            for(int i = 0; i<user.getBooks().size();i++){
-//                if(book == user.getBooks().get(i)){
-//                    isHasTheBook = true;
-//                    counter = i;
-//                    break;
-//                }
-//            }
-//
-//            if(isHasTheBook){
-//                return bookService.getChapters(bookId,chapterId);
-//            }else{
-//                return "The user has not the book!";
-//            }
-//        }
-//    }
-
     public String getTheChapterOfTheCurrentBook(Long userId,int chapterId){
         User user = userRepository.findById(userId).orElse(null);
-        Book book = bookRepository.findById(user.getUserDetails().getCurrentBookId()).orElse(null);
+        Book book = bookRepository.findById(user.getDetailsOfUser().getCurrentBookId()).orElse(null);
 
         return bookService.getChapters(book.getId(),chapterId);
     }
@@ -188,7 +150,7 @@ public class UserService {
     }
 
     public UserResponse updateOneUserDetails(Long id, UserDetailsUpdateRequest request){
-        UserDetails userDetails = userDetailsRepository.findById(id).orElse(null);
+        DetailsOfUser userDetails = userDetailsRepository.findById(id).orElse(null);
         userDetails.setGsm(request.getGsm());
         userDetails.setGender(request.getGender());
         userDetails.setSurname(request.getSurname());

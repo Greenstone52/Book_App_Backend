@@ -5,11 +5,8 @@ import lombok.Data;
 
 @Data
 public class UserCreateRequest {
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private Long userId;
     private String email;
     private String password;
-    // private Long userDetailsId;
     private String name;
     private String surname;
     private Gender gender;

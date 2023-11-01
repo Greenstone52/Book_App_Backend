@@ -87,7 +87,7 @@ public class AuthorService {
     public String deleteOneAuthorById(Long id) {
 
         Author author = authorRepository.findById(id).orElse(null);
-        String message = "The author called " + author.getName() + " was removed from the system.";
+        String message = "The author called " + author.getName() + " " +author.getSurname() + " was removed from the system.";
         authorRepository.deleteById(id);
         return message;
 

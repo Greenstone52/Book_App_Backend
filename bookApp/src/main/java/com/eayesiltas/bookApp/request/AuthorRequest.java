@@ -9,5 +9,5 @@ public class  AuthorRequest {
     private String surname;
     private Gender gender;
     private String nationality;
-    private int birthDate;
+    private String birthDate;
 }

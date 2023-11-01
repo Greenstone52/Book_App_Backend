@@ -12,9 +12,9 @@ public class UserResponse {
     private String birthDate;
 
     public UserResponse(User user){
-        name = user.getUserDetails().getName();
-        surname = user.getUserDetails().getSurname();
-        gender = user.getUserDetails().getGender();
-        birthDate = user.getUserDetails().getBirthDate();
+        name = user.getDetailsOfUser().getName();
+        surname = user.getDetailsOfUser().getSurname();
+        gender = user.getDetailsOfUser().getGender();
+        birthDate = user.getDetailsOfUser().getBirthDate();
     }
 }

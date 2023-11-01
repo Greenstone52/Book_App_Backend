@@ -1,6 +1,5 @@
 package com.eayesiltas.bookApp.algorithm;
 
-import com.eayesiltas.bookApp.entity.Book;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -62,7 +61,6 @@ public class ChapterAlgorithm {
                 }
 
             }
-            // System.out.println(wordCounters.get(i));
         }
 
         int addition = 0;
@@ -90,8 +88,6 @@ public class ChapterAlgorithm {
                 segment = results.get(i).substring(1,results.get(i).length());
                 results.set(i,segment);
             }
-
-            //System.out.println(results.get(i));
 
         }
 
