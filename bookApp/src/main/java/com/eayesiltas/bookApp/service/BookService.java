@@ -39,12 +39,16 @@ public class BookService {
     public String bookStats(Long id){
         Book book = bookRepository.findById(id).orElse(null);
 
-        if(book.getUsers().size() == 0){
-            return "Nobody read this book yet!";
-        }else if(book.getUsers().size() == 1){
-            return String.valueOf(book.getUsers().size()) + " person read this book.";
+        if(book == null){
+            return "There is no such a book.";
         }else{
-            return String.valueOf(book.getUsers().size()) + " persons read this book.";
+            if(book.getUsers().size() == 0){
+                return "Nobody read this book yet!";
+            }else if(book.getUsers().size() == 1){
+                return String.valueOf(book.getUsers().size()) + " person read this book.";
+            }else{
+                return String.valueOf(book.getUsers().size()) + " people read this book.";
+            }
         }
     }
 

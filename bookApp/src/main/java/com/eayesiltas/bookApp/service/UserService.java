@@ -124,6 +124,7 @@ public class UserService {
     }
 
     public String getTheChapterOfTheCurrentBook(Long userId,int chapterId){
+
         User user = userRepository.findById(userId).orElse(null);
         Book book = bookRepository.findById(user.getDetailsOfUser().getCurrentBookId()).orElse(null);
 
